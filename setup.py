@@ -21,7 +21,7 @@ setuptools.setup(
     ],
     entry_points = {
         "console_scripts": [
-            "ctsh=carrot_shell.main:main"
+            "ctsh=carrot-shell.main:main"
         ]
     },
     python_requires='>=3.8',
