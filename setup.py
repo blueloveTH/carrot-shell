@@ -11,7 +11,7 @@ setuptools.setup(
     description="Carrot shell🥕 is the best shell in python, for developers.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/blueloveTH/ct-sh",
+    url="https://github.com/blueloveTH/carrot-shell",
     packages=setuptools.find_packages(),
     install_requires=[],
     classifiers=[
