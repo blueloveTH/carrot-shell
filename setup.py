@@ -5,7 +5,7 @@ with open("README.md", "rt", encoding='utf-8') as f:
 
 setuptools.setup(
     name="carrot-shell",
-    version="0.1.1",
+    version="0.1.2",
     author="blueloveTH",
     author_email="blueloveth@foxmail.com",
     description="Carrot shell🥕 is the best shell in python, for developers.",
@@ -21,7 +21,7 @@ setuptools.setup(
     ],
     entry_points = {
         "console_scripts": [
-            "ctsh=ctsh.main:main",
+            "ctsh=carrot_shell.main:main"
         ]
     },
     python_requires='>=3.8',
