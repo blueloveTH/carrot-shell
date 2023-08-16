@@ -63,10 +63,14 @@ class EmptyScript(Parsed):
         pass
 
 class PythonScript(Parsed):
+    def __init__(self, s: str, mode: str = 'single'):
+        super().__init__(s)
+        self.mode = mode
+
     def __call__(self, context: Context):
         code = None
         try:
-            code = compile(self.s, '<stdin>', 'single')
+            code = compile(self.s, '<stdin>', self.mode)
         except SyntaxError as e:
             error(f'line {e.lineno}: {e.msg}')
         except:

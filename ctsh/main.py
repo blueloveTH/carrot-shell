@@ -62,7 +62,7 @@ class CarrotShell(Shell):
             else:
                 s = self.curr_block.string()
                 self.curr_block = None
-                PythonScript(s)(self.context)
+                PythonScript(s, mode='exec')(self.context)
             return
         
         obj: Parsed = parse(s, self.context)
