@@ -10,11 +10,11 @@ class CarrotShell(Shell):
         self.context.register_command(commands.base.cd())
         self.context.register_command(commands.base.clear())
         self.context.register_command(commands.base.history())
+        self.context.register_command(commands.base.cat())
 
         self.context.register_command(commands.base.ls())
         self.context.register_command(commands.base.cp())
         self.context.register_command(commands.base.mv())
-        self.context.register_command(commands.base.cat())
         self.context.register_command(commands.base.rm())
         # add common modules
         self.context.g['os'] = os

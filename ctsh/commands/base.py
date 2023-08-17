@@ -122,7 +122,7 @@ class mv(FallbackCommand):
             return
         shutil.move(src, dst)
 
-class cat(FallbackCommand):
+class cat(Command):
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog='cat')
         self.parser.add_argument('path')
