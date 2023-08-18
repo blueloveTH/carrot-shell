@@ -2,6 +2,7 @@ import re
 import sys
 import ctypes
 import os
+import pathlib
 
 def error(msg: str, end='\n'):
     # use red color
@@ -42,8 +43,8 @@ class PathCompleter:
         self.candidates = []
         pathsep = '/' if sys.platform != 'win32' else '\\'
         if pathsep in prefix:
-            # if the prefix contains path separator, then we only complete the last part
-            root, part = prefix.rsplit(pathsep, 1)
+            root = pathlib.Path(prefix).parent
+            part = pathlib.Path(prefix).name
             for path in os.listdir(root):
                 if path.startswith(part):
                     self.candidates.append(os.path.join(root, path))
