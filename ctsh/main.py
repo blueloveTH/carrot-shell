@@ -71,7 +71,21 @@ class CarrotShell(Shell):
             self.write(self.buffer)
     
     def handle_custom_key(self, c) -> bool:
-        if c == 27:
+        if sys.platform == 'win32':
+            if c == 224:
+                c = getwch()
+                if c == 72:     # up
+                    self.toggle_history(-1)
+                elif c == 80:   # down
+                    self.toggle_history(1)
+                elif c == 77:   # right
+                    pass
+                elif c == 75:   # left
+                    pass
+                else:
+                    raise NotImplementedError
+                return True
+        elif c == 27:
             c = getwch()
             if c != 91:
                 return
@@ -83,19 +97,6 @@ class CarrotShell(Shell):
             elif c == 67:   # right
                 pass
             elif c == 68:   # left
-                pass
-            else:
-                raise NotImplementedError
-            return True
-        if c == 224:
-            c = getwch()
-            if c == 72:     # up
-                self.toggle_history(-1)
-            elif c == 80:   # down
-                self.toggle_history(1)
-            elif c == 77:   # right
-                pass
-            elif c == 75:   # left
                 pass
             else:
                 raise NotImplementedError
