@@ -47,11 +47,15 @@ class clear(Command):
 class history(Command):
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog='history')
+        self.parser.add_argument('-c', action='store_true', help='clear history')
 
     def __call__(self, context, *args):
         try:
             args = self.parser.parse_args(args)
         except SystemExit:
+            return
+        if args.c:
+            context.history.clear()
             return
         for i in range(len(context.history)-1):
             print(f'{i+1}  {context.history[i]}')
