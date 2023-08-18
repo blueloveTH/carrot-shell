@@ -22,8 +22,8 @@ class cd(Command):
         except SystemExit:
             return
         path = args.path
-        if path == '~':
-            path = os.path.expanduser('~')
+        if path.startswith('~'):
+            path = os.path.expanduser(path)
         if not os.path.exists(path):
             error(f'cd: no such file or directory: {path}')
             return
