@@ -168,6 +168,8 @@ def parse_single(s: str, context: Context) -> Parsed:
             return BuiltinCommand(s, cmd, [])
         return ParsedError(s, f'{repr(s)} is neither a variable nor a command')
     else:
+        if os.path.exists(s):
+            return ShellScript(s)
         return PythonScript(s)
     
 def parse_multi(s: str, units: List[str], context: Context) -> Parsed:
@@ -181,6 +183,8 @@ def parse_multi(s: str, units: List[str], context: Context) -> Parsed:
         cmd = context.fallback_commands.get(units[0])
         if cmd is not None:
             return BuiltinCommand(s, cmd, units[1:])
+    if os.path.exists(units[0]):
+        return ShellScript(s)
     return PythonScript(s)
 
 class Block:
