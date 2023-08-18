@@ -22,6 +22,8 @@ class cd(Command):
         except SystemExit:
             return
         path = args.path
+        if path == '~':
+            path = os.path.expanduser('~')
         if not os.path.exists(path):
             error(f'cd: no such file or directory: {path}')
             return
@@ -90,6 +92,7 @@ class ls(FallbackCommand):
         max_len = max(map(len, names))
         cols = shutil.get_terminal_size().columns
         cols = cols // (max_len + 1)
+        cols = max(cols, 1)
         rows = len(names) // cols
         if len(names) % cols != 0:
             rows += 1
@@ -98,7 +101,10 @@ class ls(FallbackCommand):
                 index = j * rows + i
                 if index >= len(names):
                     break
-                print(names[index].ljust(max_len + 1), end='')
+                if cols == 1:
+                    print(names[index], end='')
+                else:
+                    print(names[index].ljust(max_len + 1), end='')
             print()
 
 class cp(FallbackCommand):

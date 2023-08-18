@@ -1,4 +1,4 @@
-import os
+import os, sys
 from .utils import *
 from .parser import *
 from . import commands, fmt
@@ -24,6 +24,8 @@ class CarrotShell(Shell):
 
         self.curr_history_count = None
         self.curr_history_index = None
+
+        os.chdir(os.path.expanduser('~'))
 
     def get_prompt(self) -> str:
         cwd = os.getcwd()
