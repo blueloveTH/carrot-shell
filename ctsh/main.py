@@ -26,6 +26,9 @@ class CarrotShell(Shell):
         # temp variables
         self.curr_block = None
 
+        self.curr_history_count = None
+        self.curr_history_index = None
+
     def get_prompt(self) -> str:
         cwd = os.getcwd()
         home_path = os.path.expanduser('~')
@@ -47,6 +50,42 @@ class CarrotShell(Shell):
         if self.curr_block is not None:
             prompt = prompt[:-2] + '... '
         return prompt
+    
+    def toggle_history(self, delta: int):
+        # if two count is not equal, reset index
+        if self.curr_history_count != len(self.context.history):
+            self.curr_history_count = len(self.context.history)
+            self.curr_history_index = len(self.context.history) - 1
+        else:
+            # if two count is equal, change index
+            self.curr_history_index += delta
+        # clamp index
+        if self.curr_history_index < 0:
+            self.curr_history_index = 0
+        if self.curr_history_index >= len(self.context.history):
+            self.curr_history_index = len(self.context.history) - 1
+        # if index is valid, change buffer
+        if 0 <= self.curr_history_index < len(self.context.history):
+            self.backspace_s(self.buffer)
+            self.buffer = self.context.history[self.curr_history_index]
+            sys.stdout.write(self.buffer)
+            sys.stdout.flush()
+    
+    def handle_escape(self, c):
+        c = getwch()
+        if c != 91:
+            return
+        c = getwch()
+        if c == 65: # up
+            self.toggle_history(-1)
+        elif c == 66: # down
+            self.toggle_history(1)
+        elif c == 67: # right
+            pass
+        elif c == 68: # left
+            pass
+        else:
+            raise NotImplementedError
     
     def process_line(self, s: str) -> None:
         prompt = self.prompt

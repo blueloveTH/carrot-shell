@@ -65,7 +65,7 @@ class PathCompleter:
 
 class Shell:
     def __init__(self):
-        self.buffer = []
+        self.buffer = ''
         self.prompt = None
         self.completer = None
 
@@ -85,6 +85,9 @@ class Shell:
         sys.stdout.write('\b' * back_counts + ' ' * back_counts + '\b' * back_counts)
         sys.stdout.flush()
 
+    def handle_escape(self, c):
+        pass
+
     def run(self):
         self._write_prompt()
         while True:
@@ -95,24 +98,26 @@ class Shell:
                 print()
                 exit(0)
 
+            if c == 27:
+                self.handle_escape(c)
+                continue
+
             c = chr(c)
             if c == '\b' or c == '\x7f':
                 self.completer = None
                 if self.buffer:
-                    removed = self.buffer.pop()
+                    removed = self.buffer[-1]; self.buffer = self.buffer[:-1]
                     self.backspace_s(removed)
                     continue
             if c in ('\r', '\n'):
                 self.completer = None
                 sys.stdout.write('\r')
-                text = ''.join(self.buffer)
-                self.process_line(text)
-                self.buffer.clear()
+                self.process_line(self.buffer)
+                self.buffer = ''
                 self._write_prompt()
             elif c == '\t':
-                text = ''.join(self.buffer)
                 if self.completer is None:
-                    words = text.split()
+                    words = self.buffer.split()
                     if words and words[-1]:
                         self.completer = PathCompleter(words[-1])
 
@@ -123,11 +128,11 @@ class Shell:
                         self.backspace_s(old)
                         sys.stdout.write(new)
                         sys.stdout.flush()
-                        self.buffer[ -len(old) : ] = list(new)
+                        self.buffer = self.buffer[:-len(old)] + new
             else:
                 self.completer = None
                 # if c is not a control character
                 if re.match(r'[\x20-\x7e]', c):
                     sys.stdout.write(c)
                     sys.stdout.flush()
-                    self.buffer.append(c)
+                    self.buffer += c
