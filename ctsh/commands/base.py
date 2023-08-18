@@ -173,3 +173,14 @@ class rm(FallbackCommand):
             shutil.rmtree(path)
         else:
             os.remove(path)
+
+class pwd(Command):
+    def __init__(self) -> None:
+        self.parser = argparse.ArgumentParser(prog='pwd')
+
+    def __call__(self, context, *args):
+        try:
+            args = self.parser.parse_args(args)
+        except SystemExit:
+            return
+        print(os.getcwd())

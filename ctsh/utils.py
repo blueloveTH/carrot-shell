@@ -22,17 +22,19 @@ else:
     libc = ctypes.cdll.LoadLibrary(None)
     import termios, tty
     def getwch():
-        # disable echo
-        fd = sys.stdin.fileno()
-        old = termios.tcgetattr(fd)
-        new = termios.tcgetattr(fd)
-        new[3] &= ~termios.ECHO
-        termios.tcsetattr(fd, termios.TCSANOW, new)
-        tty.setcbreak(sys.stdin.fileno(), termios.TCSANOW)
-        # read wchar with no buffer
-        c = libc.getwchar()
-        # restore echo
-        termios.tcsetattr(fd, termios.TCSANOW, old)
+        try:
+            # disable echo
+            fd = sys.stdin.fileno()
+            old = termios.tcgetattr(fd)
+            new = termios.tcgetattr(fd)
+            new[3] &= ~termios.ECHO
+            termios.tcsetattr(fd, termios.TCSANOW, new)
+            tty.setcbreak(sys.stdin.fileno(), termios.TCSANOW)
+            # read wchar with no buffer
+            c = libc.getwchar()
+        finally:
+            # restore echo
+            termios.tcsetattr(fd, termios.TCSANOW, old)
         return c
 
 

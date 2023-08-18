@@ -7,15 +7,11 @@ class CarrotShell(Shell):
     def __init__(self):
         super().__init__()
         self.context = Context()
-        self.context.register_command(commands.base.cd())
-        self.context.register_command(commands.base.clear())
-        self.context.register_command(commands.base.history())
-        self.context.register_command(commands.base.cat())
+        # add command.base
+        for _, obj in commands.base.__dict__.items():
+            if isinstance(obj, type) and issubclass(obj, Command):
+                self.context.register_command(obj())
 
-        self.context.register_command(commands.base.ls())
-        self.context.register_command(commands.base.cp())
-        self.context.register_command(commands.base.mv())
-        self.context.register_command(commands.base.rm())
         # add common modules
         self.context.g['os'] = os
         self.context.g['sys'] = sys
