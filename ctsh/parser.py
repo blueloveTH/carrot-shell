@@ -86,9 +86,6 @@ class PythonScript(Parsed):
             tb.stack.pop(0)     # Skips the first stack frame
             error(''.join(tb.format()), end='')
 
-    def string(self) -> str:
-        return fmt.blue(self.s)
-
 class BuiltinCommand(Parsed):
     def __init__(self, s: str, cmd: Command, args: List[str]):
         super().__init__(s)

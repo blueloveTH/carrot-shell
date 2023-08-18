@@ -40,9 +40,17 @@ class PathCompleter:
         self.prefix = prefix
         self.index = -1
         self.candidates = []
-        for path in os.listdir():
-            if path.startswith(prefix):
-                self.candidates.append(path)
+        pathsep = '/' if sys.platform != 'win32' else '\\'
+        if pathsep in prefix:
+            # if the prefix contains path separator, then we only complete the last part
+            root, part = prefix.rsplit(pathsep, 1)
+            for path in os.listdir(root):
+                if path.startswith(part):
+                    self.candidates.append(os.path.join(root, path))
+        else:
+            for path in os.listdir():
+                if path.startswith(prefix):
+                    self.candidates.append(path)
 
     def next(self):
         if not self.candidates:

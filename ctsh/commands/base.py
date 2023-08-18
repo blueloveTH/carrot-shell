@@ -25,6 +25,9 @@ class cd(Command):
         if not os.path.exists(path):
             error(f'cd: no such file or directory: {path}')
             return
+        if not os.path.isdir(path):
+            error(f'cd: not a directory: {path}')
+            return
         os.chdir(path)
 
 class clear(Command):
