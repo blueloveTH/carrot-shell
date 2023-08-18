@@ -68,8 +68,7 @@ class CarrotShell(Shell):
         if 0 <= self.curr_history_index < len(self.context.history):
             self.backspace_s(self.buffer)
             self.buffer = self.context.history[self.curr_history_index]
-            sys.stdout.write(self.buffer)
-            sys.stdout.flush()
+            self.write(self.buffer)
     
     def handle_escape(self, c):
         c = getwch()

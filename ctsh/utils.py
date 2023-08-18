@@ -77,13 +77,15 @@ class Shell:
 
     def _write_prompt(self):
         self.prompt = self.get_prompt()
-        sys.stdout.write(self.prompt)
+        self.write(self.prompt)
+
+    def write(self, s: str):
+        sys.stdout.write(s)
         sys.stdout.flush()
 
     def backspace_s(self, s: str):
         back_counts = len(s.encode('gbk'))
-        sys.stdout.write('\b' * back_counts + ' ' * back_counts + '\b' * back_counts)
-        sys.stdout.flush()
+        self.write('\b' * back_counts + ' ' * back_counts + '\b' * back_counts)
 
     def handle_escape(self, c):
         pass
@@ -126,13 +128,11 @@ class Shell:
                     if completed:
                         old, new = completed
                         self.backspace_s(old)
-                        sys.stdout.write(new)
-                        sys.stdout.flush()
+                        self.write(new)
                         self.buffer = self.buffer[:-len(old)] + new
             else:
                 self.completer = None
                 # if c is not a control character
                 if re.match(r'[\x20-\x7e]', c):
-                    sys.stdout.write(c)
-                    sys.stdout.flush()
+                    self.write(c)
                     self.buffer += c
