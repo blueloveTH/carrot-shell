@@ -86,20 +86,33 @@ class PythonScript(Parsed):
             tb.stack.pop(0)     # Skips the first stack frame
             error(''.join(tb.format()), end='')
 
-class BuiltinCommand(Parsed):
-    def __init__(self, s: str, cmd: Command, args: List[str]):
-        super().__init__(s)
-        self.cmd = cmd
-        self.args = args
-
-    def __call__(self, context: Context):
-        self.cmd(context, *self.args)
-
-    def string(self) -> str:
-        return fmt.green(self.s)
+def replace_vars(string: str, context: Context) -> str:
+    def replace(m):
+        key = m.group(1)
+        val = context.get(key)
+        if val is Context.DoesNotExist:
+            raise KeyError(key)
+        return str(val)
+    try:
+        cmd = string
+        for pattern in [r'\${(\w+)}', r'\$(\w+)\b']:
+            cmd = re.sub(pattern, replace, cmd)
+        return cmd
+    except KeyError as e:
+        error(f'variable {e} does not exist')
+        return string
     
-    def icon(self):
-        return '🍋'
+def fmt_replace_vars(string: str) -> str:
+    def replace(m):
+        return fmt.blue(m.group(0))
+    try:
+        cmd = string
+        for pattern in [r'\${(\w+)}', r'\$(\w+)\b']:
+            cmd = re.sub(pattern, replace, cmd)
+        return fmt.green(cmd)
+    except KeyError as e:
+        error(f'variable {e} does not exist')
+        return string
 
 class ParsedValue(Parsed):
     def __init__(self, s: str, val):
@@ -111,38 +124,38 @@ class ParsedValue(Parsed):
 
     def string(self) -> str:
         return fmt.blue(self.s)
+    
+class ParsedCommand(Parsed):
+    pass
 
-class ShellScript(Parsed):
-    def __init__(self, s: str):
+class BuiltinCommand(ParsedCommand):
+    def __init__(self, s: str, cmd: Command, args: List[str]):
         super().__init__(s)
-        self.patterns = [r'\${(\w+)}', r'\$(\w+)\b']
+        self.cmd = cmd
+        self.args = args
 
     def __call__(self, context: Context):
-        def replace(m):
-            key = m.group(1)
-            val = context.get(key)
-            if val is Context.DoesNotExist:
-                raise KeyError(key)
-            return str(val)
-        try:
-            cmd = self.s
-            for pattern in self.patterns:
-                cmd = re.sub(pattern, replace, cmd)
-        except KeyError as e:
-            error(f'variable {e} does not exist')
-            return
-        os.system(cmd)
+        args = [
+            replace_vars(arg, context)
+            for arg in self.args
+        ]
+        self.cmd(context, *args)
+
+    def string(self) -> str:
+        return fmt_replace_vars(self.s)
+    
+    def icon(self):
+        return '🍋'
+
+class ShellScript(ParsedCommand):
+    def __call__(self, context: Context):
+        os.system(replace_vars(self.s, context))
 
     def icon(self):
         return '🍋'
 
     def string(self) -> str:
-        def replace(m):
-            return fmt.blue(m.group(0))
-        cmd = self.s
-        for pattern in self.patterns:
-            cmd = re.sub(pattern, replace, cmd)
-        return fmt.green(cmd)
+        return fmt_replace_vars(self.s)
 
 class ParsedError(Parsed):
     def __init__(self, s: str, msg: str):

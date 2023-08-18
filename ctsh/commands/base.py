@@ -207,6 +207,19 @@ class pwd(Command):
         print(os.getcwd())
 
 
+def to_human_readable_size(size):
+    if size == 0:
+        return '0'
+    for x in ['B', 'K', 'M', 'G', 'T']:
+        if size < 1000.0:
+            # 包括小数点3个字符，如8.0，152，16
+            if size < 10:
+                return f'{size:.1f}{x}'
+            else:
+                size = round(size)
+                return f'{size}{x}'
+        size /= 1000.0
+
 class wget(FallbackCommand):
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog='wget')
@@ -225,8 +238,17 @@ class wget(FallbackCommand):
             filename = 'index.html'
         filepath = os.path.join(os.getcwd(), filename)
         with urlopen(url) as f:
+            size = int(f.getheader('Content-Length'))
             with open(filepath, 'wb') as f2:
-                f2.write(f.read())
+                while True:
+                    data = f.read(4096)
+                    if not data:
+                        break
+                    f2.write(data)
+                    percent = f2.tell() / size * 100
+                    size_0 = to_human_readable_size(f2.tell()).rjust(5)
+                    size_1 = to_human_readable_size(size)
+                    print(f'{size_0} / {size_1} ({percent:.2f}%)', end='\n')
 
 
 class du(FallbackCommand):
@@ -237,17 +259,7 @@ class du(FallbackCommand):
 
     @staticmethod
     def convert_bytes(size):
-        if size == 0:
-            return '0'
-        for x in ['B', 'K', 'M', 'G', 'T']:
-            if size < 1000.0:
-                # 包括小数点3个字符，如8.0，152，16
-                if size < 10:
-                    return f'{size:.1f}{x}'
-                else:
-                    size = round(size)
-                    return f'{size}{x}'
-            size /= 1000.0
+        return to_human_readable_size(size)
 
     def _file(self, args, filepath) -> int:
         size = os.path.getsize(filepath)

@@ -116,6 +116,7 @@ class Shell:
                     continue
             if c in ('\r', '\n'):
                 self.completer = None
+                # TODO: if a line is very long, \r will not work
                 sys.stdout.write('\r')
                 self.process_line(self.buffer)
                 self.buffer = ''
