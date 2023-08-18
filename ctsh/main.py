@@ -70,21 +70,37 @@ class CarrotShell(Shell):
             self.buffer = self.context.history[self.curr_history_index]
             self.write(self.buffer)
     
-    def handle_escape(self, c):
-        c = getwch()
-        if c != 91:
-            return
-        c = getwch()
-        if c == 65: # up
-            self.toggle_history(-1)
-        elif c == 66: # down
-            self.toggle_history(1)
-        elif c == 67: # right
-            pass
-        elif c == 68: # left
-            pass
-        else:
-            raise NotImplementedError
+    def handle_custom_key(self, c) -> bool:
+        if c == 27:
+            c = getwch()
+            if c != 91:
+                return
+            c = getwch()
+            if c == 65:     # up
+                self.toggle_history(-1)
+            elif c == 66:   # down
+                self.toggle_history(1)
+            elif c == 67:   # right
+                pass
+            elif c == 68:   # left
+                pass
+            else:
+                raise NotImplementedError
+            return True
+        if c == 224:
+            c = getwch()
+            if c == 72:     # up
+                self.toggle_history(-1)
+            elif c == 80:   # down
+                self.toggle_history(1)
+            elif c == 77:   # right
+                pass
+            elif c == 75:   # left
+                pass
+            else:
+                raise NotImplementedError
+            return True
+        return False
     
     def process_line(self, s: str) -> None:
         prompt = self.prompt

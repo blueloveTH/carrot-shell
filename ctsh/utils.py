@@ -88,8 +88,8 @@ class Shell:
         back_counts = len(s.encode('gbk'))
         self.write('\b' * back_counts + ' ' * back_counts + '\b' * back_counts)
 
-    def handle_escape(self, c):
-        pass
+    def handle_custom_key(self, c) -> bool:
+        return False
 
     def run(self):
         self._write_prompt()
@@ -101,8 +101,7 @@ class Shell:
                 print()
                 exit(0)
 
-            if c == 27:
-                self.handle_escape(c)
+            if self.handle_custom_key(c):
                 continue
 
             c = chr(c)
