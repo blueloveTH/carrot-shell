@@ -54,6 +54,7 @@ class PathCompleter:
             for path in os.listdir():
                 if path.startswith(prefix):
                     self.candidates.append(path)
+        self.candidates.sort(key=lambda x: len(x))
 
     def next(self):
         if not self.candidates:
