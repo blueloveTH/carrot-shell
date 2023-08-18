@@ -94,7 +94,7 @@ class CarrotShell(Shell):
 
         if self.curr_block is not None:
             need_more_lines = self.curr_block.input(s)
-            print(prompt + fmt.blue(s), flush=True)
+            print(prompt + s, flush=True)
             if need_more_lines:
                 pass
             else:
@@ -108,7 +108,7 @@ class CarrotShell(Shell):
         if isinstance(obj, Block):
             self.curr_block = obj
             prompt = self.prompt[:-2] + '>>> '
-            print(prompt + fmt.blue(s), flush=True)
+            print(prompt + s, flush=True)
             return
         
         if obj.icon() is not None:
