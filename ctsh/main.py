@@ -25,7 +25,12 @@ class CarrotShell(Shell):
         self.curr_history_count = None
         self.curr_history_index = None
 
-        os.chdir(os.path.expanduser('~'))
+        if len(sys.argv) == 1:
+            os.chdir(os.path.expanduser('~'))
+        elif len(sys.argv) == 2:
+            os.chdir(sys.argv[1])
+        else:
+            raise NotImplementedError
 
     def get_prompt(self) -> str:
         cwd = os.getcwd()

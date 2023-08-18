@@ -253,6 +253,8 @@ class du(FallbackCommand):
         size = os.path.getsize(filepath)
         if args.h:
             size_s = self.convert_bytes(size)
+        else:
+            size_s = size
         print(str(size_s).ljust(8), filepath)
         return size
 
@@ -263,6 +265,8 @@ class du(FallbackCommand):
                 size += os.path.getsize(os.path.join(root, f))
         if args.h:
             size_s = self.convert_bytes(size)
+        else:
+            size_s = size
         print(str(size_s).ljust(8), filepath)
         return size
 
