@@ -1,11 +1,12 @@
 import setuptools
+import ctsh
 
 with open("README.md", "rt", encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(
     name="carrot-shell",
-    version="0.2.3",
+    version=ctsh.__version__,
     author="blueloveTH",
     author_email="blueloveth@foxmail.com",
     description="Carrot shell🥕 is the best shell in python, for developers.",

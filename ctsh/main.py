@@ -2,6 +2,7 @@ import os, sys
 from .utils import *
 from .parser import *
 from . import commands, fmt
+from .version import __version__
 
 class CarrotShell(Shell):
     def __init__(self):
@@ -24,6 +25,11 @@ class CarrotShell(Shell):
 
         self.curr_history_count = None
         self.curr_history_index = None
+
+        python_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        print(f"CarrotShell {__version__} (Python {python_ver} on {sys.platform})")
+        print(fmt.blue("https://github.com/blueloveTH/carrot-shell"))
+        print()
 
     def get_prompt(self) -> str:
         cwd = os.getcwd()
