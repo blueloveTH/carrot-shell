@@ -1,8 +1,7 @@
 import re
 import sys
 import ctypes
-import os
-import pathlib
+from .completer import PathCompleter
 
 def error(msg: str, end='\n'):
     # use red color
@@ -37,35 +36,11 @@ else:
             termios.tcsetattr(fd, termios.TCSANOW, old)
         return c
 
+def _save_cursor():
+    sys.stdout.write('\0337')
 
-class PathCompleter:
-    def __init__(self, prefix: str):
-        self.prefix = prefix
-        self.index = -1
-        self.candidates = []
-        pathsep = '/' if sys.platform != 'win32' else '\\'
-        if pathsep in prefix:
-            root = pathlib.Path(prefix).parent
-            part = pathlib.Path(prefix).name
-            for path in os.listdir(root):
-                if path.startswith(part):
-                    self.candidates.append(os.path.join(root, path))
-        else:
-            for path in os.listdir():
-                if path.startswith(prefix):
-                    self.candidates.append(path)
-        self.candidates.sort(key=lambda x: len(x))
-
-    def next(self):
-        if not self.candidates:
-            return None
-        if self.index == -1:
-            old = self.prefix
-        else:
-            old = self.candidates[self.index]
-        self.index = (self.index + 1) % len(self.candidates)
-        return old, self.candidates[self.index]
-
+def _restore_cursor():
+    sys.stdout.write('\0338')
 
 class Shell:
     def __init__(self):
@@ -95,6 +70,8 @@ class Shell:
         return False
 
     def run(self):
+        _save_cursor()
+
         self._write_prompt()
         while True:
             try:
@@ -116,10 +93,16 @@ class Shell:
                     continue
             if c in ('\r', '\n'):
                 self.completer = None
+
                 # TODO: if a line is very long, \r will not work
-                sys.stdout.write('\r')
+                # sys.stdout.write('\r')
+                _restore_cursor()
+
                 self.process_line(self.buffer)
                 self.buffer = ''
+
+                _save_cursor()
+
                 self._write_prompt()
             elif c == '\t':
                 if self.completer is None:
