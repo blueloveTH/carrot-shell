@@ -11,6 +11,8 @@ def is_identifier(s: str):
     return re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', s) is not None
 
 def has_system_command(cmd: str):
+    if cmd in ['from', 'import']:
+        return False
     if sys.platform == 'win32':
         if cmd in ['cls', 'mkdir']:
             return True
