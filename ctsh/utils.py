@@ -117,6 +117,6 @@ class Shell:
                         self.buffer = self.buffer[:-len(old)] + new
             else:
                 self.completer = None
-                if re.match(r'[\x20-\x7e]', c) or ord(c) > 0x7f:
+                if 32 <= ord(c) <= 126 or ord(c) > 127:
                     self.write(c)
                     self.buffer += c
