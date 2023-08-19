@@ -1,4 +1,4 @@
-import re
+import re, os
 import sys
 import ctypes
 from .completer import PathCompleter
@@ -36,11 +36,11 @@ else:
             termios.tcsetattr(fd, termios.TCSANOW, old)
         return c
 
-def _save_cursor():
-    sys.stdout.write('\0337')
-
-def _restore_cursor():
-    sys.stdout.write('\0338')
+def estimate_terminal_lines(string: str) -> int:
+    if len(string) == 0:
+        return 1
+    width, _ = os.get_terminal_size()
+    return (len(string) - 1) // width + 1
 
 class Shell:
     def __init__(self):
@@ -70,8 +70,6 @@ class Shell:
         return False
 
     def run(self):
-        _save_cursor()
-
         self._write_prompt()
         while True:
             try:
@@ -94,15 +92,15 @@ class Shell:
             if c in ('\r', '\n'):
                 self.completer = None
 
-                # TODO: if a line is very long, \r will not work
-                # sys.stdout.write('\r')
-                _restore_cursor()
+                lines = estimate_terminal_lines(self.buffer)
+                if lines == 1:
+                    sys.stdout.write('\r')
+                else:
+                    for _ in range(lines - 1):
+                        sys.stdout.write('\033[F')
 
                 self.process_line(self.buffer)
                 self.buffer = ''
-
-                _save_cursor()
-
                 self._write_prompt()
             elif c == '\t':
                 if self.completer is None:
@@ -119,7 +117,6 @@ class Shell:
                         self.buffer = self.buffer[:-len(old)] + new
             else:
                 self.completer = None
-                # if c is not a control character
-                if re.match(r'[\x20-\x7e]', c):
+                if re.match(r'[\x20-\x7e]', c) or ord(c) > 0x7f:
                     self.write(c)
                     self.buffer += c
