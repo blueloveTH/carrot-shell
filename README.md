@@ -2,6 +2,8 @@
 
 CarrotShell🥕 is the best shell in python, for developers.
 
+![demo](image.png)
+
 ## Setup
 ```
 pip install carrot-shell
