@@ -333,4 +333,22 @@ class conda(Command):
         os.system(full_cmd)
 
 
+class export(Command):
+    def __init__(self) -> None:
+        pass
+
+    def __call__(self, context, *args):
+        for a in args:
+            if '=' not in a:
+                continue
+            key, value = a.split('=')
+            # if value is a string literal, remove the quotes
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+            elif value.startswith("'") and value.endswith("'"):
+                value = value[1:-1]
+            os.environ[key] = value
+
+class _set(export):
+    pass
 

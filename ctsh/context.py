@@ -13,10 +13,11 @@ class Context:
 
     def register_command(self, cmd: Command):
         assert isinstance(cmd, Command)
+        name = type(cmd).__name__.lstrip('_')
         if isinstance(cmd, FallbackCommand):
-            self.fallback_commands[type(cmd).__name__] = cmd
+            self.fallback_commands[name] = cmd
         else:
-            self.commands[type(cmd).__name__] = cmd
+            self.commands[name] = cmd
 
     def __getitem__(self, key: str):
         val = self.get(key)
