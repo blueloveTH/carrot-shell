@@ -305,6 +305,32 @@ class du(FallbackCommand):
             self._file(args, path)
         
 
-            
-            
+class conda(Command):
+    def __init__(self) -> None:
+        pass
+
+    def activate(self, name: str):
+        # get the current module path
+        ctsh_path = __file__
+        for _ in range(3):
+            ctsh_path = os.path.dirname(ctsh_path)
+
+        script = f"__import__('sys').path.append('{ctsh_path}');__import__('runpy').run_module('ctsh')"
+        code = os.system(
+            f'conda run -n {name} --no-capture-output python -c "{script}"'
+        )
+        if code == 0:
+            exit(0)
+
+    def __call__(self, context, *args):
+        if len(args) == 2 and args[0] == 'activate':
+            self.activate(args[1])
+            return
+        if len(args) == 1 and args[0] == 'deactivate':
+            self.activate('base')
+            return
+        full_cmd = 'conda ' + ' '.join(args)
+        os.system(full_cmd)
+
+
 

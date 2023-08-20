@@ -18,31 +18,32 @@ class CarrotShell(Shell):
         self.context.g['sys'] = sys
 
         self.context.g['__context__'] = self.context
-        # settings
-        self.show_prefix = False
         # temp variables
         self.curr_block = None
 
         self.curr_history_count = None
         self.curr_history_index = None
 
+        # only display this on startup
         python_ver = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
-        print(f"CarrotShell {__version__} (Python {python_ver} on {sys.platform})")
-        print(fmt.blue("https://github.com/blueloveTH/carrot-shell"))
-        print()
+        python_info = f"(Python {python_ver} on {sys.platform})"
+        if os.environ.get('CTSH_FIRST_RUN_FLAG') is None:
+            print(f"CarrotShell {__version__} {python_info}")
+            print(fmt.blue("https://github.com/blueloveTH/carrot-shell"))
+            print()
+            os.environ['CTSH_FIRST_RUN_FLAG'] = '1'
+        else:
+            name = fmt.blue(os.environ.get("CONDA_DEFAULT_ENV"))
+            print(f'switch to {name} {python_info}')
 
     def get_prompt(self) -> str:
         cwd = os.getcwd()
         home_path = os.path.expanduser('~')
 
-        if self.show_prefix:
-            user = home_path.split('/')[-1]
-            host = os.uname().nodename
-            if host.endswith('.local'):
-                host = host[:-6]
-            prefix = f'{user}@{host} '
-        else:
-            prefix = ''
+        prefix = ''
+        conda_env = os.environ.get('CONDA_DEFAULT_ENV')
+        if conda_env is not None:
+            prefix += fmt.gray(f'({conda_env}) ')
 
         if cwd.startswith(home_path):
             cwd = '~' + cwd[len(home_path):]
