@@ -332,6 +332,7 @@ class conda(Command):
         full_cmd = 'conda ' + ' '.join(args)
         os.system(full_cmd)
 
+from ast import literal_eval
 
 class export(Command):
     def __init__(self) -> None:
@@ -342,11 +343,14 @@ class export(Command):
             if '=' not in a:
                 continue
             key, value = a.split('=')
-            # if value is a string literal, remove the quotes
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            elif value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
+
+            try:
+                new_value = literal_eval(value)
+                if isinstance(new_value, str):
+                    value = new_value
+            except:
+                pass
+
             os.environ[key] = value
 
 class _set(export):
