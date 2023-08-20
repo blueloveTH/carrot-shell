@@ -2,9 +2,15 @@
 
 CarrotShell🥕 is the best shell in python, for developers.
 
-## Usage
+## Setup
 ```
 pip install carrot-shell
+```
+
+Python 3.8 or later is required.
+
+## Usage
+```
 ctsh
 ```
 
