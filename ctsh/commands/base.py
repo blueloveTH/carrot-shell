@@ -335,23 +335,25 @@ class conda(Command):
 from ast import literal_eval
 
 class export(Command):
-    def __init__(self) -> None:
-        pass
-
     def __call__(self, context, *args):
+        flag = False
         for a in args:
             if '=' not in a:
                 continue
             key, value = a.split('=')
-
+            if not key or not value:
+                continue
             try:
                 new_value = literal_eval(value)
                 if isinstance(new_value, str):
                     value = new_value
             except:
                 pass
-
             os.environ[key] = value
+            flag = True
+        if not flag:
+            name = type(self).__name__.lstrip('_')
+            error(f'{name}: invalid arguments')
 
 class _set(export):
     pass
