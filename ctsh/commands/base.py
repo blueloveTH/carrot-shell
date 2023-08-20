@@ -248,7 +248,8 @@ class wget(FallbackCommand):
                     percent = f2.tell() / size * 100
                     size_0 = to_human_readable_size(f2.tell()).rjust(5)
                     size_1 = to_human_readable_size(size)
-                    print(f'{size_0} / {size_1} ({percent:.2f}%)', end='\n')
+                    print(f'{size_0} / {size_1} ({percent:.2f}%)', end='\r')
+                print()
 
 
 class du(FallbackCommand):
