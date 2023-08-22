@@ -11,7 +11,7 @@ def is_identifier(s: str):
     return re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', s) is not None
 
 def has_system_command(cmd: str):
-    if cmd in ['from', 'import']:
+    if cmd in ['from', 'import', 'class', 'def']:
         return False
     if sys.platform == 'win32':
         if cmd in ['cls', 'mkdir']:
@@ -72,7 +72,7 @@ class PythonScript(Parsed):
     def __call__(self, context: Context):
         code = None
         try:
-            code = compile(self.s, '<stdin>', self.mode)
+            code = compile(self.s + '\n', '<stdin>', self.mode)
         except SyntaxError as e:
             error(f'line {e.lineno}: {e.msg}')
         except:
