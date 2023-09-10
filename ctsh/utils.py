@@ -76,8 +76,8 @@ class Shell:
                 c: int = getwch()
                 if c == 3: raise KeyboardInterrupt
             except KeyboardInterrupt:
-                print()
-                exit(0)
+                print('KeyboardInterrupt', end='')
+                c = ord('\n')
 
             if self.handle_custom_key(c):
                 continue
