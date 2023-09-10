@@ -151,7 +151,11 @@ class BuiltinCommand(ParsedCommand):
 
 class ShellScript(ParsedCommand):
     def __call__(self, context: Context):
-        os.system(replace_vars(self.s, context))
+        try:
+            os.system(replace_vars(self.s, context))
+        except KeyboardInterrupt:
+            print()
+            print('KeyboardInterrupt')
 
     def icon(self):
         return '🍋'
