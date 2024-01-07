@@ -87,6 +87,9 @@ class ls(FallbackCommand):
             if os.path.isdir(os.path.join(path, name)):
                 name += '/'
             names.append(name)
+        if len(names) == 0:
+            print()
+            return
         # pretty print name like bash's ls
         # make each column's length equal as far as possible
         max_len = max(map(len, names))

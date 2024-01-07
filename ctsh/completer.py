@@ -11,9 +11,10 @@ class PathCompleter:
         if pathsep in prefix:
             root = pathlib.Path(prefix).parent
             part = pathlib.Path(prefix).name
-            for path in os.listdir(root):
-                if path.startswith(part):
-                    self.candidates.append(os.path.join(root, path))
+            if os.path.exists(root):
+                for path in os.listdir(root):
+                    if path.startswith(part):
+                        self.candidates.append(os.path.join(root, path))
         else:
             for path in os.listdir():
                 if path.startswith(prefix):
