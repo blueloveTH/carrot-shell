@@ -1,6 +1,6 @@
-# CarrotShell🥕
+# carrot-shell🥕
 
-CarrotShell🥕 is the best shell in python, for developers.
+carrot-shell🥕 is a smart shell in python, for developers.
 
 ![demo](image.png)
 
