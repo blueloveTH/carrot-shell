@@ -143,6 +143,9 @@ class CarrotShell(Shell):
             error(traceback.format_exc(), end='')
 
 def main():
+    # set http_proxy=http://127.0.0.1:7890 & set https_proxy=http://127.0.0.1:7890
+    os.environ['http_proxy'] = 'http://127.0.0.1:7890'
+    os.environ['https_proxy'] = 'http://127.0.0.1:7890'
     CarrotShell().run()
 
 
